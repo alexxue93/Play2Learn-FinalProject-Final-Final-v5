@@ -102,7 +102,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "play2learn", # Server name
         "USER": "postgres",
-        "PASSWORD": "63840", # Change this password to your own password.
+        "PASSWORD": "your password", # Change this password to your own password.
         "HOST": "localhost",
         "PORT": 5433 # It is either port 5432 or 5433, depending on your version of postgres.
     }
