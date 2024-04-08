@@ -58,6 +58,9 @@
         <button @click="play" class="btn btn-primary w-100 m-1">Play Again</button>
         <button @click="screen = 'start'" class="btn btn-secondary w-100 m-1">Back to Start Screen</button>
       </div>
+      <div v-if="userNotLoggedIn">
+        <p class="text-center">You must be logged in to record your score.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -73,7 +76,7 @@ import anagrams from "@/helpers/anagrams";
 import {getRandomInteger} from "@/helpers/helpers";
 
 export default {
-  name: 'AnagramGame',
+  name: 'AnagramHunt',
   data() {
     return {
       userName: '',
@@ -87,6 +90,7 @@ export default {
       correctGuesses: [],
       userInput: "",
       interval: null,
+      userNotLoggedIn: false,
     }
   },
   computed: {
@@ -127,8 +131,15 @@ export default {
       this.correctGuesses = [];
     },
     async recordScore() {
-      // TODO: when Anagram Hunt finishes, make an Ajax call with axios (this.axios)
-      // to record the score on the backend
+      const data = {
+        "score": this.score,
+        "settings": this.wordLength,
+        "game": "ANAGRAM"
+      };
+      const response = (await this.axios.post("/record-score/", data)).data;
+      if (response.message) // "You need to be logged in."
+        this.userNotLoggedIn = true;
+      return (response);
     }
   },
   watch: {
@@ -141,7 +152,7 @@ export default {
         this.screen = "end";
         this.timeLeft = 60;
         clearInterval(this.interval);
-        this.recordScore(); // calls recordScore
+        this.recordScore();
       }
     }
   }

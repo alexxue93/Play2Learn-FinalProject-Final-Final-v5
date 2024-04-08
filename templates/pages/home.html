@@ -1,0 +1,36 @@
+{% extends "_base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block main %}
+  <h1 class="text-center mt-3 mb-3">Welcome to my site!</h1>
+  <p class="text-center fs-5">Want to play some games?</p>
+  <p class="text-center fs-5">Click on the games list on the navigation bar.</p>
+  <p class="text-center fs-5">Contact us through the link on the bottom.</p>
+  <p class="text-center fs-5">Leave some reviews on the games!.</p>
+  <div class="mt-5 mb-5">
+    {% if reviews %}
+    <div id="reviewCarousel" class="carousel slide-dark carousel-fade text-center" data-bs-ride="carousel" data-interval="10000">
+      <div class="carousel-inner w-100">
+        {% for review in reviews %}
+        <div class="carousel-item {% if forloop.first %} active {% endif %}">
+          <div class="card border-primary m-auto mb-3 text-center"
+            style="max-width: 30rem">
+            <div class="card-header"><em>Reviewed by: </em>{{ review.user }}</div>
+            <div class="card-body">
+              <h5 class="card-title">{{ review.title }}</h5>
+              <p class="card-text">{{ review.review }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div>
+    {% if not user.is_authenticated %}
+    <p class="text-center fs-5"><a href="{% url 'account_login' %}">Log In</a> or 
+      <a href="{% url 'account_signup' %}">Sign Up</a> to track <em>your</em> scores!</p>
+  {% endif %}
+  </div>
+{% endblock %}

@@ -100,6 +100,9 @@
         <button @click="play" class="btn btn-primary w-100 m-1">Play Again</button>
         <button @click="screen = 'start'" class="btn btn-secondary w-100 m-1">Back to Start Screen</button>
       </div>
+      <div v-if="userNotLoggedIn">
+        <p class="text-center">You must be logged in to record your score.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -114,7 +117,7 @@
 import { getRandomInteger } from '@/helpers/helpers';
 
 export default {
-  name: 'MathGame',
+  name: 'MathFacts',
   data() {
     return {
       score: 0,
@@ -132,10 +135,12 @@ export default {
       userInput: "",
       interval: null,
       timeLeft: 60,
+      userNotLoggedIn: false,
     }
   },
   methods: {
     play() {
+      this.score = 0;
       this.screen = "play";
       this.getNewQuestion();
       this.interval = setInterval(() => {
@@ -159,8 +164,15 @@ export default {
       }
     },
     async recordScore() {
-      // TODO: when Math Facts finishes, make an Ajax call with axios (this.axios)
-      // to record the score on the backend
+      const data = {
+        "score": this.score,
+        "settings": `${this.operation},${this.maxNumber}`,
+        "game": "MATH"
+      };
+      const response = (await this.axios.post("/record-score/", data)).data;
+      if (response.message) // "You need to be logged in."
+        this.userNotLoggedIn = true;
+      return response;
     }
   },
   computed: {
@@ -202,7 +214,7 @@ export default {
         clearInterval(this.interval);
         this.timeLeft = 60;
         this.screen = "end";
-        this.recordScore(); // call to record score
+        this.recordScore();
       }
     }
   }
